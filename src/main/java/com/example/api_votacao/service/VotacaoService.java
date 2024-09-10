@@ -5,6 +5,7 @@ import com.example.api_votacao.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,5 +69,32 @@ public class VotacaoService {
         voto.setCandidato(candidato.get());
         voto.setEleitor(eleitor.get());
         return votoRepository.save(voto);
+    }
+
+    public Sessao abrirSessao() {
+
+        if (sessaoRepository.existsByAbertaTrue()) {
+            throw new IllegalStateException("Já existe uma sessão aberta.");
+        }
+
+        Sessao sessao = new Sessao();
+        sessao.setInicio(LocalDateTime.now());
+        sessao.setAberta(true);
+        return sessaoRepository.save(sessao);
+    }
+
+    public Sessao fecharSessao(Long sessaoId) {
+
+        Optional<Sessao> sessao = sessaoRepository.findById(sessaoId);
+        if (sessao.isEmpty() || !sessao.get().isAberta()) {
+            throw new IllegalArgumentException("Sessão não encontrada ou já está fechada.");
+        }
+        long votos = votoRepository.count();
+        if (votos == 1) {
+            votoRepository.deleteAll();
+        }
+        sessao.get().setFim(LocalDateTime.now());
+        sessao.get().setAberta(false);
+        return sessaoRepository.save(sessao.get());
     }
 }
