@@ -20,6 +20,9 @@ public class VotacaoService {
     @Autowired
     private VotoRepository votoRepository;
 
+    @Autowired
+    private SessaoRepository sessaoRepository;
+
     public Candidato adicionarCandidato(Candidato candidato) {
         if (candidatoRepository.existsByNome(candidato.getNome())) {
             throw new IllegalArgumentException("Candidato já existe.");
@@ -44,5 +47,26 @@ public class VotacaoService {
 
     public List<Voto> listarVotos() {
         return votoRepository.findAll();
+    }
+
+    public Voto adicionarVoto(Long eleitorId, Long candidatoId) {
+
+        if (!sessaoRepository.existsByAbertaTrue()) {
+            throw new IllegalStateException("Sessão não está aberta.");
+        }
+        if (votoRepository.existsByEleitorId(eleitorId)) {
+            throw new IllegalArgumentException("Eleitor já votou.");
+        }
+
+        Optional<Candidato> candidato = candidatoRepository.findById(candidatoId);
+        Optional<Eleitor> eleitor = eleitorRepository.findById(eleitorId);
+        if (candidato.isEmpty() || eleitor.isEmpty()) {
+            throw new IllegalArgumentException("Candidato ou Eleitor não encontrado.");
+        }
+
+        Voto voto = new Voto();
+        voto.setCandidato(candidato.get());
+        voto.setEleitor(eleitor.get());
+        return votoRepository.save(voto);
     }
 }
