@@ -131,6 +131,17 @@ public class VotacaoService {
         return cargoRepository.save(cargo);
     }
 
+    public Cargo atualizarCargo(Long id, Cargo cargo) {
+        Optional<Cargo> cargoExistente = cargoRepository.findById(id);
+        if (cargoExistente.isPresent()) {
+            Cargo cargoAtualizado = cargoExistente.get();
+            cargoAtualizado.setDescricao(cargo.getDescricao());
+            return cargoRepository.save(cargoAtualizado);
+        } else {
+            throw new RuntimeException("Cargo não encontrado");
+        }
+    }
+
     public List<Cargo> listarCargos() {
         return cargoRepository.findAll();
     }
