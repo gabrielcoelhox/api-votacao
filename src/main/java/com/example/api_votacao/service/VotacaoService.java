@@ -30,16 +30,12 @@ public class VotacaoService {
     private CargoRepository cargoRepository;
 
     public Candidato adicionarCandidato(Candidato candidato) {
-        if (candidatoRepository.existsByNome(candidato.getNome())) {
-            throw new IllegalArgumentException("Candidato já existe.");
-        }
+        verificarExistenciaCandidato(candidato.getNome());
         return candidatoRepository.save(candidato);
     }
 
     public Eleitor adicionarEleitor(Eleitor eleitor) {
-        if (eleitorRepository.existsByNome(eleitor.getNome())) {
-            throw new IllegalArgumentException("Eleitor já existe.");
-        }
+        verificarExistenciaEleitor(eleitor.getNome());
         return eleitorRepository.save(eleitor);
     }
 
@@ -56,32 +52,20 @@ public class VotacaoService {
     }
 
     public Voto adicionarVoto(Long eleitorId, Long candidatoId) {
+        verificarSessaoAberta();
+        verificarEleitorJaVotou(eleitorId);
 
-        if (!sessaoRepository.existsByAbertaTrue()) {
-            throw new IllegalStateException("Sessão não está aberta.");
-        }
-        if (votoRepository.existsByEleitorId(eleitorId)) {
-            throw new IllegalArgumentException("Eleitor já votou.");
-        }
-
-        Optional<Candidato> candidato = candidatoRepository.findById(candidatoId);
-        Optional<Eleitor> eleitor = eleitorRepository.findById(eleitorId);
-        if (candidato.isEmpty() || eleitor.isEmpty()) {
-            throw new IllegalArgumentException("Candidato ou Eleitor não encontrado.");
-        }
+        Candidato candidato = buscarCandidatoPorId(candidatoId);
+        Eleitor eleitor = buscarEleitorPorId(eleitorId);
 
         Voto voto = new Voto();
-        voto.setCandidato(candidato.get());
-        voto.setEleitor(eleitor.get());
+        voto.setCandidato(candidato);
+        voto.setEleitor(eleitor);
         return votoRepository.save(voto);
     }
 
     public Sessao abrirSessao() {
-
-        if (sessaoRepository.existsByAbertaTrue()) {
-            throw new IllegalStateException("Já existe uma sessão aberta.");
-        }
-
+        verificarSessaoAberta();
         Sessao sessao = new Sessao();
         sessao.setInicio(LocalDateTime.now());
         sessao.setAberta(true);
@@ -89,24 +73,17 @@ public class VotacaoService {
     }
 
     public Sessao fecharSessao(Long sessaoId) {
+        Sessao sessao = buscarSessaoPorId(sessaoId);
+        verificarSessaoFechada(sessao);
+        verificarQuantidadeVotos();
 
-        Optional<Sessao> sessao = sessaoRepository.findById(sessaoId);
-        if (sessao.isEmpty() || !sessao.get().isAberta()) {
-            throw new IllegalArgumentException("Sessão não encontrada ou já está fechada.");
-        }
-        long votos = votoRepository.count();
-        if (votos == 1) {
-            throw new IllegalArgumentException("Sessão não pode ser encerrada com 1 voto.");
-        }
-
-        sessao.get().setFim(LocalDateTime.now());
-        sessao.get().setAberta(false);
-        return sessaoRepository.save(sessao.get());
+        sessao.setFim(LocalDateTime.now());
+        sessao.setAberta(false);
+        return sessaoRepository.save(sessao);
     }
 
     public Sessao buscarSessao(Long idSessao) {
-        return sessaoRepository.findById(idSessao)
-                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada."));
+        return buscarSessaoPorId(idSessao);
     }
 
     public List<Voto> buscarVotosPorSessao(Long idSessao) {
@@ -114,16 +91,12 @@ public class VotacaoService {
     }
 
     public void excluirCandidato(Long candidatoId) {
-        if (votoRepository.countCandidatoById(candidatoId) > 0) {
-            throw new IllegalArgumentException("Candidato não pode ser excluído, pois possui votos.");
-        }
+        verificarCandidatoComVotos(candidatoId);
         candidatoRepository.deleteById(candidatoId);
     }
 
     public void excluirEleitor(Long eleitorId) {
-        if (votoRepository.existsByEleitorId(eleitorId)) {
-            throw new IllegalArgumentException("Eleitor não pode ser excluído, pois possui votos.");
-        }
+        verificarEleitorComVotos(eleitorId);
         eleitorRepository.deleteById(eleitorId);
     }
 
@@ -132,14 +105,9 @@ public class VotacaoService {
     }
 
     public Cargo atualizarCargo(Long id, Cargo cargo) {
-        Optional<Cargo> cargoExistente = cargoRepository.findById(id);
-        if (cargoExistente.isPresent()) {
-            Cargo cargoAtualizado = cargoExistente.get();
-            cargoAtualizado.setDescricao(cargo.getDescricao());
-            return cargoRepository.save(cargoAtualizado);
-        } else {
-            throw new RuntimeException("Cargo não encontrado");
-        }
+        Cargo cargoExistente = buscarCargoPorId(id);
+        cargoExistente.setDescricao(cargo.getDescricao());
+        return cargoRepository.save(cargoExistente);
     }
 
     public List<Cargo> listarCargos() {
@@ -151,10 +119,8 @@ public class VotacaoService {
     }
 
     public String gerarBoletimUrna(Long idSessao) {
-        Sessao sessao = buscarSessao(idSessao);
-        if (sessao.isAberta() || sessao.getFim() == null) {
-            throw new IllegalArgumentException("Sessão não encerrada ou não encontrada.");
-        }
+        Sessao sessao = buscarSessaoPorId(idSessao);
+        verificarSessaoEncerrada(sessao);
 
         List<Voto> votos = buscarVotosPorSessao(idSessao);
         Map<Candidato, Long> votosPorCandidato = votos.stream()
@@ -168,5 +134,84 @@ public class VotacaoService {
         });
 
         return boletim.toString();
+    }
+
+    private void verificarExistenciaCandidato(String nome) {
+        if (candidatoRepository.existsByNome(nome)) {
+            throw new IllegalArgumentException("O Candidato já existe.");
+        }
+    }
+
+    private void verificarExistenciaEleitor(String nome) {
+        if (eleitorRepository.existsByNome(nome)) {
+            throw new IllegalArgumentException("O Eleitor já existe.");
+        }
+    }
+
+    private void verificarSessaoAberta() {
+        if (sessaoRepository.existsByAbertaTrue()) {
+            throw new IllegalStateException("Já existe uma sessão aberta.");
+        }
+    }
+
+    private void verificarEleitorJaVotou(Long eleitorId) {
+        if (votoRepository.existsByEleitorId(eleitorId)) {
+            throw new IllegalArgumentException("O Eleitor já votou.");
+        }
+    }
+
+    private Candidato buscarCandidatoPorId(Long candidatoId) {
+        return candidatoRepository.findById(candidatoId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidato não encontrado."));
+    }
+
+    private Eleitor buscarEleitorPorId(Long eleitorId) {
+        return eleitorRepository.findById(eleitorId)
+                .orElseThrow(() -> new IllegalArgumentException("Eleitor não encontrado."));
+    }
+
+    private Cargo buscarCargoPorId(Long id) {
+        Optional<Cargo> cargo = cargoRepository.findById(id);
+        if (cargo.isPresent()) {
+            return cargo.get();
+        } else {
+            throw new IllegalArgumentException("Cargo não encontrado.");
+        }
+    }
+
+    private Sessao buscarSessaoPorId(Long sessaoId) {
+        return sessaoRepository.findById(sessaoId)
+                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada."));
+    }
+
+    private void verificarSessaoFechada(Sessao sessao) {
+        if (!sessao.isAberta()) {
+            throw new IllegalArgumentException("Sessão já está fechada.");
+        }
+    }
+
+    private void verificarQuantidadeVotos() {
+        long votos = votoRepository.count();
+        if (votos == 1) {
+            throw new IllegalArgumentException("Sessão não pode ser encerrada com 1 voto.");
+        }
+    }
+
+    private void verificarCandidatoComVotos(Long candidatoId) {
+        if (votoRepository.countCandidatoById(candidatoId) > 0) {
+            throw new IllegalArgumentException("Candidato não pode ser excluído, pois possui votos.");
+        }
+    }
+
+    private void verificarEleitorComVotos(Long eleitorId) {
+        if (votoRepository.existsByEleitorId(eleitorId)) {
+            throw new IllegalArgumentException("Eleitor não pode ser excluído, pois possui votos.");
+        }
+    }
+
+    private void verificarSessaoEncerrada(Sessao sessao) {
+        if (sessao.isAberta() || sessao.getFim() == null) {
+            throw new IllegalArgumentException("Sessão não encerrada ou não encontrada.");
+        }
     }
 }
