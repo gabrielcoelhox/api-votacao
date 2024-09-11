@@ -20,10 +20,7 @@ public class RelatorioController {
 
     @GetMapping("/boletim-urna/{idSessao}")
     public String gerarBoletimUrna(@PathVariable Long idSessao) {
-        Sessao sessao = votacaoService.buscarSessao(idSessao);
-        validarSessaoEncerrada(sessao);
-        Map<Candidato, Long> votos = contarVotosPorSessao(idSessao);
-        return formatarBoletimUrna(votos);
+        return votacaoService.gerarBoletimUrna(idSessao);
     }
 
     private void validarSessaoEncerrada(Sessao sessao) {
@@ -35,15 +32,5 @@ public class RelatorioController {
     private Map<Candidato, Long> contarVotosPorSessao(Long idSessao) {
         List<Voto> votos = votacaoService.buscarVotosPorSessao(idSessao);
         return votos.stream().collect(Collectors.groupingBy(Voto::getCandidato, Collectors.counting()));
-    }
-
-    private String formatarBoletimUrna(Map<Candidato, Long> votos) {
-        StringBuilder boletim = new StringBuilder();
-        boletim.append(String.format("%-40s\n", "Boletim de Urna"));
-        boletim.append(String.format("%-40s\n", "--------------------"));
-        votos.forEach((candidato, count) -> {
-            boletim.append(String.format("%-30s %10d\n", candidato.getNome(), count));
-        });
-        return boletim.toString();
     }
 }

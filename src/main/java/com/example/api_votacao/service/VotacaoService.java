@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VotacaoService {
@@ -91,8 +93,9 @@ public class VotacaoService {
         }
         long votos = votoRepository.count();
         if (votos == 1) {
-            votoRepository.deleteAll();
+            throw new IllegalArgumentException("Sessão não pode ser encerrada com 1 voto.");
         }
+
         sessao.get().setFim(LocalDateTime.now());
         sessao.get().setAberta(false);
         return sessaoRepository.save(sessao.get());
@@ -105,5 +108,39 @@ public class VotacaoService {
 
     public List<Voto> buscarVotosPorSessao(Long idSessao) {
         return votoRepository.findBySessaoId(idSessao);
+    }
+
+    public void excluirCandidato(Long candidatoId) {
+        if (votoRepository.countCandidatoById(candidatoId) > 0) {
+            throw new IllegalArgumentException("Candidato não pode ser excluído, pois possui votos.");
+        }
+        candidatoRepository.deleteById(candidatoId);
+    }
+
+    public void excluirEleitor(Long eleitorId) {
+        if (votoRepository.existsByEleitorId(eleitorId)) {
+            throw new IllegalArgumentException("Eleitor não pode ser excluído, pois possui votos.");
+        }
+        eleitorRepository.deleteById(eleitorId);
+    }
+
+    public String gerarBoletimUrna(Long idSessao) {
+        Sessao sessao = buscarSessao(idSessao);
+        if (sessao.isAberta() || sessao.getFim() == null) {
+            throw new IllegalArgumentException("Sessão não encerrada ou não encontrada.");
+        }
+
+        List<Voto> votos = buscarVotosPorSessao(idSessao);
+        Map<Candidato, Long> votosPorCandidato = votos.stream()
+                .collect(Collectors.groupingBy(Voto::getCandidato, Collectors.counting()));
+
+        StringBuilder boletim = new StringBuilder();
+        boletim.append(String.format("%-40s\n", "Boletim de Urna"));
+        boletim.append(String.format("%-40s\n", "--------------------"));
+        votosPorCandidato.forEach((candidato, count) -> {
+            boletim.append(String.format("%-30s %10d\n", candidato.getNome(), count));
+        });
+
+        return boletim.toString();
     }
 }
