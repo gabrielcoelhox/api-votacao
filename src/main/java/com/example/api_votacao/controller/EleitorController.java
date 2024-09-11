@@ -1,7 +1,7 @@
 package com.example.api_votacao.controller;
 
 import com.example.api_votacao.entity.Eleitor;
-import com.example.api_votacao.service.VotacaoService;
+import com.example.api_votacao.service.EleitorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +17,7 @@ import java.util.List;
 public class EleitorController {
 
     @Autowired
-    private VotacaoService votacaoService;
+    private EleitorService eleitorService;
 
     @GetMapping
     @Operation(summary = "Listar eleitores", description = "Retorna uma lista de todos os eleitores")
@@ -26,7 +26,7 @@ public class EleitorController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public List<Eleitor> listar() {
-        return votacaoService.listarEleitores();
+        return eleitorService.listarEleitores();
     }
 
     @PostMapping
@@ -37,7 +37,7 @@ public class EleitorController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public Eleitor adicionar(@RequestBody Eleitor eleitor) {
-        return votacaoService.adicionarEleitor(eleitor);
+        return eleitorService.adicionarEleitor(eleitor);
     }
 
     @PutMapping("/{id}")
@@ -49,7 +49,7 @@ public class EleitorController {
     })
     public Eleitor atualizar(@PathVariable Long id, @RequestBody Eleitor eleitor) {
         eleitor.setId(id);
-        return votacaoService.adicionarEleitor(eleitor);
+        return eleitorService.adicionarEleitor(eleitor);
     }
 
     @DeleteMapping("/{id}")
@@ -60,6 +60,6 @@ public class EleitorController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public void excluir(@PathVariable Long id) {
-        votacaoService.excluirEleitor(id);
+        eleitorService.excluirEleitor(id);
     }
 }

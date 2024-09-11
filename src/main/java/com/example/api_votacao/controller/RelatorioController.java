@@ -1,6 +1,6 @@
 package com.example.api_votacao.controller;
 
-import com.example.api_votacao.service.VotacaoService;
+import com.example.api_votacao.service.RelatorioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class RelatorioController {
 
     @Autowired
-    private VotacaoService votacaoService;
+    private RelatorioService relatorioService;
 
     @GetMapping("/boletim-urna/{idSessao}")
     @Operation(summary = "Gerar boletim de urna", description = "Gera o boletim de urna para uma sessão específica")
@@ -25,7 +25,7 @@ public class RelatorioController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public ResponseEntity<String> gerarBoletimUrna(@PathVariable Long idSessao) {
-        String boletim = votacaoService.gerarBoletimUrna(idSessao);
+        String boletim = relatorioService.gerarBoletimUrna(idSessao);
         return ResponseEntity.ok(boletim);
     }
 }

@@ -34,7 +34,7 @@ public class CargoServiceTest {
 
     @Nested
     @DisplayName("Testes do CargoService")
-    class AddEntitiesTests {
+    class CargoServiceTests {
 
         @Test
         @DisplayName("Então adiciona um cargo com sucesso")

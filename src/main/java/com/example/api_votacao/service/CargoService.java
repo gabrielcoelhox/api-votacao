@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class CargoService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VotacaoService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CargoService.class);
 
     @Autowired
     private CargoRepository cargoRepository;

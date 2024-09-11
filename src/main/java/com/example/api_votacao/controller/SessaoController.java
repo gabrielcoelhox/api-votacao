@@ -1,7 +1,7 @@
 package com.example.api_votacao.controller;
 
 import com.example.api_votacao.entity.Sessao;
-import com.example.api_votacao.service.VotacaoService;
+import com.example.api_votacao.service.SessaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class SessaoController {
 
     @Autowired
-    private VotacaoService votacaoService;
+    private SessaoService sessaoService;
 
     @PostMapping("/abrir")
     @Operation(summary = "Abrir sessão", description = "Abre uma nova sessão de votação")
@@ -24,7 +24,7 @@ public class SessaoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public Sessao abrirSessao() {
-        return votacaoService.abrirSessao();
+        return sessaoService.abrirSessao();
     }
 
     @PatchMapping("/fechar/{id}")
@@ -35,6 +35,6 @@ public class SessaoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public Sessao fecharSessao(@PathVariable Long id) {
-        return votacaoService.fecharSessao(id);
+        return sessaoService.fecharSessao(id);
     }
 }
