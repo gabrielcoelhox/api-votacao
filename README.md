@@ -22,7 +22,7 @@
 
 Este projeto foi desenvolvido como desafio de avaliação para a vaga de desenvolvedor da empresa __*Lifters*__. A proposta do projeto é implementar uma pequena API, que permita cadastro básico dos candidatos, eleitores, dos votos e relatório para identificar a quantidade de votos para cada candidato e o vencedor.
 
-## <a id="id2">:hammer_and_wrench: Como executar o projeto </a> 
+## <a id="id2">:hammer_and_wrench: Como executar o projeto </a>
 
 ### Pré-requisitos
 
@@ -42,6 +42,18 @@ $ Inicie o projeto utilizando o comando mvn spring-boot:run
 # Aguarde até o projeto ser completemante buildado
 $ Acesse o site do Swagger http://localhost:8080/swagger-ui
 ```
+</details>
+
+<details>
+<summary><strong>Rodando os testes</strong></summary>
+
+Rode o comando __*mvn test*__
+
+Resultados:
+
+![IMG](img/Testes1.png)
+![IMG](img/Testes2.png)
+
 </details>
 
 ## <a id="id3"> 📝 Regras de negócio </a>
