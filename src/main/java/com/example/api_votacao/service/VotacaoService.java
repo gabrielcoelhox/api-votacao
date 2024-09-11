@@ -29,9 +29,6 @@ public class VotacaoService {
     @Autowired
     private SessaoRepository sessaoRepository;
 
-    @Autowired
-    private CargoRepository cargoRepository;
-
     public Candidato adicionarCandidato(Candidato candidato) {
         LOGGER.info("Adicionando candidato: {}", candidato.getNome());
         verificarExistenciaCandidato(candidato.getNome());
@@ -115,28 +112,6 @@ public class VotacaoService {
         eleitorRepository.deleteById(eleitorId);
     }
 
-    public Cargo adicionarCargo(Cargo cargo) {
-        LOGGER.info("Adicionando cargo: {}", cargo.getDescricao());
-        return cargoRepository.save(cargo);
-    }
-
-    public Cargo atualizarCargo(Long id, Cargo cargo) {
-        LOGGER.info("Atualizando cargo ID = {}", id);
-        Cargo cargoExistente = buscarCargoPorId(id);
-        cargoExistente.setDescricao(cargo.getDescricao());
-        return cargoRepository.save(cargoExistente);
-    }
-
-    public List<Cargo> listarCargos() {
-        LOGGER.info("Listando todos os cargos");
-        return cargoRepository.findAll();
-    }
-
-    public void excluirCargo(Long cargoId) {
-        LOGGER.info("Excluindo cargo ID = {}", cargoId);
-        cargoRepository.deleteById(cargoId);
-    }
-
     public String gerarBoletimUrna(Long idSessao) {
         LOGGER.info("Gerando boletim de urna para a sessão ID = {}", idSessao);
         Sessao sessao = buscarSessaoPorId(idSessao);
@@ -197,14 +172,6 @@ public class VotacaoService {
                 .orElseThrow(() -> {
                     LOGGER.error("Eleitor não encontrado: ID = {}", eleitorId);
                     return new IllegalArgumentException("Eleitor não encontrado.");
-                });
-    }
-
-    private Cargo buscarCargoPorId(Long id) {
-        return cargoRepository.findById(id)
-                .orElseThrow(() -> {
-                    LOGGER.error("Cargo não encontrado: ID = {}", id);
-                    return new IllegalArgumentException("Cargo não encontrado.");
                 });
     }
 

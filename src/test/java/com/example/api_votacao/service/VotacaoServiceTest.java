@@ -34,9 +34,6 @@ public class VotacaoServiceTest {
     @Mock
     private SessaoRepository sessaoRepository;
 
-    @Mock
-    private CargoRepository cargoRepository;
-
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -92,20 +89,6 @@ public class VotacaoServiceTest {
             assertNotNull(result);
             verify(votoRepository, times(1)).save(any(Voto.class));
         }
-
-        @Test
-        @DisplayName("Então adiciona um cargo com sucesso")
-        public void adicionarCargoTest() {
-            Cargo cargo = new Cargo();
-            cargo.setDescricao("Cargo 1");
-
-            when(cargoRepository.save(any(Cargo.class))).thenReturn(cargo);
-
-            Cargo result = votacaoService.adicionarCargo(cargo);
-
-            assertEquals("Cargo 1", result.getDescricao());
-            verify(cargoRepository, times(1)).save(cargo);
-        }
     }
 
     @Nested
@@ -149,19 +132,6 @@ public class VotacaoServiceTest {
 
             assertEquals(2, result.size());
             verify(votoRepository, times(1)).findAll();
-        }
-
-        @Test
-        @DisplayName("Então lista todos os cargos com sucesso")
-        public void listarCargosTest() {
-            List<Cargo> cargos = Arrays.asList(new Cargo(), new Cargo());
-
-            when(cargoRepository.findAll()).thenReturn(cargos);
-
-            List<Cargo> result = votacaoService.listarCargos();
-
-            assertEquals(2, result.size());
-            verify(cargoRepository, times(1)).findAll();
         }
     }
 
@@ -268,35 +238,6 @@ public class VotacaoServiceTest {
             votacaoService.excluirEleitor(1L);
 
             verify(eleitorRepository, times(1)).deleteById(anyLong());
-        }
-
-        @Test
-        @DisplayName("Então exclui um cargo com sucesso")
-        public void excluirCargoTest() {
-            votacaoService.excluirCargo(1L);
-
-            verify(cargoRepository, times(1)).deleteById(anyLong());
-        }
-    }
-
-    @Nested
-    @DisplayName("Atualizando entidades")
-    class UpdateEntitiesTests {
-
-        @Test
-        @DisplayName("Então atualiza um cargo com sucesso")
-        public void atualizarCargoTest() {
-            Cargo cargo = new Cargo();
-            cargo.setId(1L);
-            cargo.setDescricao("Descricao Atualizada");
-
-            when(cargoRepository.findById(1L)).thenReturn(Optional.of(cargo));
-            when(cargoRepository.save(any(Cargo.class))).thenReturn(cargo);
-
-            Cargo atualizado = votacaoService.atualizarCargo(1L, cargo);
-
-            assertEquals("Descricao Atualizada", atualizado.getDescricao());
-            verify(cargoRepository, times(1)).save(cargo);
         }
     }
 }

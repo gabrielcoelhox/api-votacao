@@ -1,7 +1,7 @@
 package com.example.api_votacao.controller;
 
 import com.example.api_votacao.entity.Cargo;
-import com.example.api_votacao.service.VotacaoService;
+import com.example.api_votacao.service.CargoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,7 +17,7 @@ import java.util.List;
 public class CargoController {
 
     @Autowired
-    private VotacaoService votacaoService;
+    private CargoService cargoService;
 
     @GetMapping
     @Operation(summary = "Listar cargos", description = "Retorna uma lista de todos os cargos")
@@ -26,7 +26,7 @@ public class CargoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public List<Cargo> listar() {
-        return votacaoService.listarCargos();
+        return cargoService.listarCargos();
     }
 
     @PostMapping
@@ -37,7 +37,7 @@ public class CargoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public Cargo adicionar(@RequestBody Cargo cargo) {
-        return votacaoService.adicionarCargo(cargo);
+        return cargoService.adicionarCargo(cargo);
     }
 
     @PutMapping("/{id}")
@@ -49,7 +49,7 @@ public class CargoController {
     })
     public Cargo atualizar(@PathVariable Long id, @RequestBody Cargo cargo) {
         cargo.setId(id);
-        return votacaoService.atualizarCargo(id, cargo);
+        return cargoService.atualizarCargo(id, cargo);
     }
 
     @DeleteMapping("/{id}")
@@ -60,6 +60,6 @@ public class CargoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public void excluir(@PathVariable Long id) {
-        votacaoService.excluirCargo(id);
+        cargoService.excluirCargo(id);
     }
 }
