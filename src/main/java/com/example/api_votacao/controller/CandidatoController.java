@@ -23,4 +23,15 @@ public class CandidatoController {
     public Candidato adicionar(@RequestBody Candidato candidato) {
         return votacaoService.adicionarCandidato(candidato);
     }
+
+    @PutMapping("/{id}")
+    public Candidato atualizar(@PathVariable Long id, @RequestBody Candidato candidato) {
+        candidato.setId(id);
+        return votacaoService.adicionarCandidato(candidato);
+    }
+
+    @DeleteMapping("/{id}")
+    public void excluir(@PathVariable Long id) {
+        votacaoService.excluirCandidato(id);
+    }
 }

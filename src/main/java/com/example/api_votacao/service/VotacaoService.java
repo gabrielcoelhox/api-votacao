@@ -26,6 +26,9 @@ public class VotacaoService {
     @Autowired
     private SessaoRepository sessaoRepository;
 
+    @Autowired
+    private CargoRepository cargoRepository;
+
     public Candidato adicionarCandidato(Candidato candidato) {
         if (candidatoRepository.existsByNome(candidato.getNome())) {
             throw new IllegalArgumentException("Candidato já existe.");
@@ -122,6 +125,18 @@ public class VotacaoService {
             throw new IllegalArgumentException("Eleitor não pode ser excluído, pois possui votos.");
         }
         eleitorRepository.deleteById(eleitorId);
+    }
+
+    public Cargo adicionarCargo(Cargo cargo) {
+        return cargoRepository.save(cargo);
+    }
+
+    public List<Cargo> listarCargos() {
+        return cargoRepository.findAll();
+    }
+
+    public void excluirCargo(Long cargoId) {
+        cargoRepository.deleteById(cargoId);
     }
 
     public String gerarBoletimUrna(Long idSessao) {

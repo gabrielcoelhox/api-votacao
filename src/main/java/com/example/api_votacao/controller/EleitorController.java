@@ -23,4 +23,15 @@ public class EleitorController {
     public Eleitor adicionar(@RequestBody Eleitor eleitor) {
         return votacaoService.adicionarEleitor(eleitor);
     }
+
+    @PutMapping("/{id}")
+    public Eleitor atualizar(@PathVariable Long id, @RequestBody Eleitor eleitor) {
+        eleitor.setId(id);
+        return votacaoService.adicionarEleitor(eleitor);
+    }
+
+    @DeleteMapping("/{id}")
+    public void excluir(@PathVariable Long id) {
+        votacaoService.excluirEleitor(id);
+    }
 }
