@@ -22,4 +22,7 @@ public class Voto {
 
     @ManyToOne
     private Eleitor eleitor;
+
+    @ManyToOne
+    private Sessao sessao;
 }
