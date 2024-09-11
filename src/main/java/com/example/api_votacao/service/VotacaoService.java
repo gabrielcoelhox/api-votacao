@@ -97,4 +97,13 @@ public class VotacaoService {
         sessao.get().setAberta(false);
         return sessaoRepository.save(sessao.get());
     }
+
+    public Sessao buscarSessao(Long idSessao) {
+        return sessaoRepository.findById(idSessao)
+                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada."));
+    }
+
+    public List<Voto> buscarVotosPorSessao(Long idSessao) {
+        return votoRepository.findBySessaoId(idSessao);
+    }
 }

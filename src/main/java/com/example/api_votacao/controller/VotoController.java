@@ -18,4 +18,9 @@ public class VotoController {
     public List<Voto> listar() {
         return votacaoService.listarVotos();
     }
+
+    @PostMapping("/{eleitorId}/{candidatoId}")
+    public Voto votar(@PathVariable Long eleitorId, @PathVariable Long candidatoId) {
+        return votacaoService.adicionarVoto(eleitorId, candidatoId);
+    }
 }
