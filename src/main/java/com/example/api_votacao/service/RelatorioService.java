@@ -41,17 +41,33 @@ public class RelatorioService {
         sessaoService.verificarSessaoEncerrada(sessao);
 
         List<Voto> votos = votacaoService.buscarVotosPorSessao(idSessao);
-        Map<Candidato, Long> votosPorCandidato = votos.stream()
-                .collect(Collectors.groupingBy(Voto::getCandidato, Collectors.counting()));
+        Map<Candidato, Long> votosPorCandidato = agruparVotosPorCandidato(votos);
 
-        long totalVotos = votosPorCandidato.values().stream().mapToLong(Long::longValue).sum();
-        Candidato vencedor = votosPorCandidato.entrySet().stream()
-                .max(Comparator.comparing(Map.Entry::getValue))
-                .map(Map.Entry::getKey)
-                .orElse(null);
+        long totalVotos = calcularTotalVotos(votosPorCandidato);
+        Candidato vencedor = determinarVencedor(votosPorCandidato);
 
         Cargo cargo = cargoService.buscarCargoPorId(idSessao);
 
+        return formatarBoletim(sessao, votosPorCandidato, totalVotos, vencedor, cargo);
+    }
+
+    private Map<Candidato, Long> agruparVotosPorCandidato(List<Voto> votos) {
+        return votos.stream()
+                .collect(Collectors.groupingBy(Voto::getCandidato, Collectors.counting()));
+    }
+
+    private long calcularTotalVotos(Map<Candidato, Long> votosPorCandidato) {
+        return votosPorCandidato.values().stream().mapToLong(Long::longValue).sum();
+    }
+
+    private Candidato determinarVencedor(Map<Candidato, Long> votosPorCandidato) {
+        return votosPorCandidato.entrySet().stream()
+                .max(Comparator.comparing(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    private String formatarBoletim(Sessao sessao, Map<Candidato, Long> votosPorCandidato, long totalVotos, Candidato vencedor, Cargo cargo) {
         StringBuilder boletim = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         String dataRelatorio = LocalDateTime.now().format(formatter);
