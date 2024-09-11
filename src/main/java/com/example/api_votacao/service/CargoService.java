@@ -18,14 +18,14 @@ public class CargoService {
     private CargoRepository cargoRepository;
 
     public Cargo adicionarCargo(Cargo cargo) {
-        LOGGER.info("Adicionando cargo: {}", cargo.getDescricao());
+        LOGGER.info("Adicionando cargo: {}", cargo.getNome());
         return cargoRepository.save(cargo);
     }
 
     public Cargo atualizarCargo(Long id, Cargo cargo) {
         LOGGER.info("Atualizando cargo ID = {}", id);
         Cargo cargoExistente = buscarCargoPorId(id);
-        cargoExistente.setDescricao(cargo.getDescricao());
+        cargoExistente.setNome(cargo.getNome());
         return cargoRepository.save(cargoExistente);
     }
 
@@ -39,7 +39,7 @@ public class CargoService {
         cargoRepository.deleteById(cargoId);
     }
 
-    private Cargo buscarCargoPorId(Long id) {
+    public Cargo buscarCargoPorId(Long id) {
         return cargoRepository.findById(id)
                 .orElseThrow(() -> {
                     LOGGER.error("Cargo não encontrado: ID = {}", id);

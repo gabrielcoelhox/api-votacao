@@ -5,6 +5,7 @@ import com.example.api_votacao.repository.SessaoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class SessaoService {
     private SessaoRepository sessaoRepository;
 
     @Autowired
+    @Lazy
     private VotacaoService votacaoService;
 
     public Sessao abrirSessao() {
@@ -50,6 +52,12 @@ public class SessaoService {
             LOGGER.error("Já existe uma sessão aberta");
             throw new IllegalStateException("Já existe uma sessão aberta.");
         }
+    }
+
+    public Sessao buscarSessaoAberta() {
+        LOGGER.info("Buscando sessão aberta");
+        return sessaoRepository.findByAbertaTrue()
+                .orElseThrow(() -> new IllegalStateException("Nenhuma sessão aberta encontrada"));
     }
 
     protected Sessao buscarSessaoPorId(Long sessaoId) {

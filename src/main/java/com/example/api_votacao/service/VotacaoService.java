@@ -5,11 +5,10 @@ import com.example.api_votacao.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class VotacaoService {
@@ -29,9 +28,11 @@ public class VotacaoService {
     private CandidatoService candidatoService;
 
     @Autowired
+    @Lazy
     private EleitorService eleitorService;
 
     @Autowired
+    @Lazy
     private SessaoService sessaoService;
 
     public List<Voto> listarVotos() {
@@ -41,7 +42,7 @@ public class VotacaoService {
 
     public Voto adicionarVoto(Long eleitorId, Long candidatoId) {
         LOGGER.info("Adicionando voto: Eleitor ID = {}, Candidato ID = {}", eleitorId, candidatoId);
-        sessaoService.verificarSessaoAberta();
+        Sessao sessao = sessaoService.buscarSessaoAberta();
         verificarEleitorJaVotou(eleitorId);
 
         Candidato candidato = candidatoService.buscarCandidatoPorId(candidatoId);
@@ -50,6 +51,7 @@ public class VotacaoService {
         Voto voto = new Voto();
         voto.setCandidato(candidato);
         voto.setEleitor(eleitor);
+        voto.setSessao(sessao);
         return votoRepository.save(voto);
     }
 

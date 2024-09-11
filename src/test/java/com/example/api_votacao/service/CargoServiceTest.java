@@ -40,13 +40,13 @@ public class CargoServiceTest {
         @DisplayName("Então adiciona um cargo com sucesso")
         public void adicionarCargoTest() {
             Cargo cargo = new Cargo();
-            cargo.setDescricao("Cargo 1");
+            cargo.setNome("Cargo 1");
 
             when(cargoRepository.save(any(Cargo.class))).thenReturn(cargo);
 
             Cargo result = cargoService.adicionarCargo(cargo);
 
-            assertEquals("Cargo 1", result.getDescricao());
+            assertEquals("Cargo 1", result.getNome());
             verify(cargoRepository, times(1)).save(cargo);
         }
 
@@ -76,14 +76,14 @@ public class CargoServiceTest {
         public void atualizarCargoTest() {
             Cargo cargo = new Cargo();
             cargo.setId(1L);
-            cargo.setDescricao("Descricao Atualizada");
+            cargo.setNome("Descricao Atualizada");
 
             when(cargoRepository.findById(1L)).thenReturn(Optional.of(cargo));
             when(cargoRepository.save(any(Cargo.class))).thenReturn(cargo);
 
             Cargo atualizado = cargoService.atualizarCargo(1L, cargo);
 
-            assertEquals("Descricao Atualizada", atualizado.getDescricao());
+            assertEquals("Descricao Atualizada", atualizado.getNome());
             verify(cargoRepository, times(1)).save(cargo);
         }
     }
