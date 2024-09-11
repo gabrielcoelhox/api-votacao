@@ -44,7 +44,7 @@ $ Acesse o site do Swagger http://localhost:8080/swagger-ui
 ```
 </details>
 
-## <a id="id3"> 📝 Regra de negócio </a>
+## <a id="id3"> 📝 Regras de negócio </a>
 
 1. Validar para permitir apenas um voto por eleitor;
 2. Validar para não permitir candidatos e eleitores duplicados;
@@ -69,6 +69,248 @@ $ Acesse o site do Swagger http://localhost:8080/swagger-ui
 
 ## <a id="id5"> 🖼️ Demonstração </a>
 
+### Eleitores
+<details>
+<summary><strong>Ver mais</strong></summary>
 
+```bash
+[
+  {
+    "nome": "VINICIUS"
+  },
+  {
+    "nome": "MATHEUS"
+  },
+  {
+    "nome": "GABRIEL"
+  },
+  {
+    "nome": "LUAN"
+  },
+  {
+    "nome": "CAIO"
+  },
+  {
+    "nome": "RENATO"
+  },
+  {
+    "nome": "JOAO"
+  },
+  {
+    "nome": "SILVIO"
+  },
+  {
+    "nome": "BRUNO"
+  },
+  {
+    "nome": "BRENO"
+  }
+]
+```
+</details>
+
+### Lista de candidatos
+<details>
+<summary><strong>Ver mais</strong></summary>
+
+```bash
+[
+  {
+    "nome": "LUCAS"
+  },
+  {
+    "nome": "GILMAR"
+  },
+  {
+    "nome": "VICTOR"
+  },
+  {
+    "nome": "JONATAS"
+  },
+  {
+    "nome": "HENRIQUE"
+  },
+  {
+    "nome": "HUGO"
+  }
+]
+```
+</details>
+
+### Cargos
+<details>
+<summary><strong>Ver mais</strong></summary>
+
+```bash
+[
+  {
+    "nome": "PREFEITO"
+  }
+]
+```
+</details>
+
+### Votos
+<details>
+<summary><strong>Ver mais</strong></summary>
+
+```bash
+[
+  {
+    "id": 1,
+    "candidato": {
+      "nome": "GILMAR"
+    },
+    "eleitor": {
+      "nome": "VINICIUS"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 2,
+    "candidato": {
+      "nome": "LUCAS"
+    },
+    "eleitor": {
+      "nome": "MATHEUS"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 3,
+    "candidato": {
+      "nome": "VICTOR"
+    },
+    "eleitor": {
+      "nome": "GABRIEL"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 4,
+    "candidato": {
+      "nome": "VICTOR"
+    },
+    "eleitor": {
+      "nome": "LUAN"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 5,
+    "candidato": {
+      "nome": "VICTOR"
+    },
+    "eleitor": {
+      "nome": "CAIO"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 6,
+    "candidato": {
+      "nome": "JONATAS"
+    },
+    "eleitor": {
+      "nome": "RENATO"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 7,
+    "candidato": {
+      "nome": "HENRIQUE"
+    },
+    "eleitor": {
+      "nome": "JOAO"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 8,
+    "candidato": {
+      "nome": "HUGO"
+    },
+    "eleitor": {
+      "nome": "SILVIO"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  },
+  {
+    "id": 9,
+    "candidato": {
+      "nome": "LUCAS"
+    },
+    "eleitor": {
+      "nome": "BRUNO"
+    },
+    "sessao": {
+      "id": 1,
+      "inicio": "2024-09-11T18:16:35.546656",
+      "fim": null,
+      "aberta": true
+    }
+  }
+]
+```
+</details>
+
+### Sessão Fechada
+<details>
+<summary><strong>Ver mais</strong></summary>
+
+```bash
+{
+  "id": 1,
+  "inicio": "2024-09-11T18:16:35.546656",
+  "fim": "2024-09-11T18:19:03.346099354",
+  "aberta": false
+}
+```
+</details>
+
+
+### Resultado do boletim de urna
+ ![IMG](img/BoletimVotos.png)
 
 [Java JDK]: https://www.oracle.com/br/java/technologies/downloads/
