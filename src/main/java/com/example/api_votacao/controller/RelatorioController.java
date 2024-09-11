@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,7 +24,8 @@ public class RelatorioController {
             @ApiResponse(responseCode = "404", description = "Sessão não encontrada"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    public String gerarBoletimUrna(@PathVariable Long idSessao) {
-        return votacaoService.gerarBoletimUrna(idSessao);
+    public ResponseEntity<String> gerarBoletimUrna(@PathVariable Long idSessao) {
+        String boletim = votacaoService.gerarBoletimUrna(idSessao);
+        return ResponseEntity.ok(boletim);
     }
 }

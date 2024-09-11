@@ -25,7 +25,7 @@ public class VotoController {
             @ApiResponse(responseCode = "200", description = "Lista de votos retornada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    public List<Voto> listar() {
+    public List<Voto> listarVotos() {
         return votacaoService.listarVotos();
     }
 
