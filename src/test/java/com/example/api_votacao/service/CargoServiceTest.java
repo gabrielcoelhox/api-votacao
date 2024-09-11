@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @DisplayName("Testes do CargoService")
@@ -33,12 +34,12 @@ public class CargoServiceTest {
     }
 
     @Nested
-    @DisplayName("Testes do CargoService")
-    class CargoServiceTests {
+    @DisplayName("Testes de adicionar cargo")
+    class AdicionarCargoTests {
 
         @Test
-        @DisplayName("Então adiciona um cargo com sucesso")
-        public void adicionarCargoTest() {
+        @DisplayName("Deve adicionar um cargo com sucesso")
+        public void adicionarCargoComSucesso() {
             Cargo cargo = new Cargo();
             cargo.setNome("Cargo 1");
 
@@ -49,10 +50,15 @@ public class CargoServiceTest {
             assertEquals("Cargo 1", result.getNome());
             verify(cargoRepository, times(1)).save(cargo);
         }
+    }
+
+    @Nested
+    @DisplayName("Testes de listar cargos")
+    class ListarCargosTests {
 
         @Test
-        @DisplayName("Então lista todos os cargos com sucesso")
-        public void listarCargosTest() {
+        @DisplayName("Deve listar todos os cargos com sucesso")
+        public void listarCargosComSucesso() {
             List<Cargo> cargos = Arrays.asList(new Cargo(), new Cargo());
 
             when(cargoRepository.findAll()).thenReturn(cargos);
@@ -62,18 +68,28 @@ public class CargoServiceTest {
             assertEquals(2, result.size());
             verify(cargoRepository, times(1)).findAll();
         }
+    }
+
+    @Nested
+    @DisplayName("Testes de excluir cargo")
+    class ExcluirCargoTests {
 
         @Test
-        @DisplayName("Então exclui um cargo com sucesso")
-        public void excluirCargoTest() {
+        @DisplayName("Deve excluir um cargo com sucesso")
+        public void excluirCargoComSucesso() {
             cargoService.excluirCargo(1L);
 
             verify(cargoRepository, times(1)).deleteById(anyLong());
         }
+    }
+
+    @Nested
+    @DisplayName("Testes de atualizar cargo")
+    class AtualizarCargoTests {
 
         @Test
-        @DisplayName("Então atualiza um cargo com sucesso")
-        public void atualizarCargoTest() {
+        @DisplayName("Deve atualizar um cargo com sucesso")
+        public void atualizarCargoComSucesso() {
             Cargo cargo = new Cargo();
             cargo.setId(1L);
             cargo.setNome("Descricao Atualizada");
@@ -85,6 +101,23 @@ public class CargoServiceTest {
 
             assertEquals("Descricao Atualizada", atualizado.getNome());
             verify(cargoRepository, times(1)).save(cargo);
+        }
+
+        @Test
+        @DisplayName("Deve lançar exceção ao tentar atualizar cargo inexistente")
+        public void atualizarCargoInexistente() {
+            Cargo cargo = new Cargo();
+            cargo.setId(1L);
+            cargo.setNome("Descricao Atualizada");
+
+            when(cargoRepository.findById(1L)).thenReturn(Optional.empty());
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+                cargoService.atualizarCargo(1L, cargo);
+            });
+
+            assertEquals("Cargo não encontrado.", exception.getMessage());
+            verify(cargoRepository, never()).save(any(Cargo.class));
         }
     }
 }

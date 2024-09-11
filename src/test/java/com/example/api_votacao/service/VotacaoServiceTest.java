@@ -39,12 +39,12 @@ public class VotacaoServiceTest {
     }
 
     @Nested
-    @DisplayName("Testes do VotacaoService")
-    class VotacaoServiceTests {
+    @DisplayName("Testes de adicionar voto")
+    class AdicionarVotoTests {
 
         @Test
-        @DisplayName("Então adiciona um voto com sucesso")
-        public void adicionarVotoTest() {
+        @DisplayName("Deve adicionar um voto com sucesso")
+        public void adicionarVotoComSucesso() {
             Candidato candidato = new Candidato();
             Eleitor eleitor = new Eleitor();
             Voto voto = new Voto();
@@ -63,8 +63,27 @@ public class VotacaoServiceTest {
         }
 
         @Test
-        @DisplayName("Então lista todos os votos com sucesso")
-        public void listarVotosTest() {
+        @DisplayName("Deve lançar exceção ao adicionar voto em sessão fechada")
+        public void adicionarVotoEmSessaoFechada() {
+            doThrow(new IllegalStateException("Nenhuma sessão aberta encontrada"))
+                    .when(sessaoService).buscarSessaoAberta();
+
+            IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+                votacaoService.adicionarVoto(1L, 1L);
+            });
+
+            assertEquals("Nenhuma sessão aberta encontrada", exception.getMessage());
+            verify(votoRepository, never()).save(any(Voto.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Testes de listar votos")
+    class ListarVotosTests {
+
+        @Test
+        @DisplayName("Deve listar todos os votos com sucesso")
+        public void listarVotosComSucesso() {
             List<Voto> votos = Arrays.asList(new Voto(), new Voto());
 
             when(votoRepository.findAll()).thenReturn(votos);
@@ -74,10 +93,15 @@ public class VotacaoServiceTest {
             assertEquals(2, result.size());
             verify(votoRepository, times(1)).findAll();
         }
+    }
+
+    @Nested
+    @DisplayName("Testes de buscar votos por sessão")
+    class BuscarVotosPorSessaoTests {
 
         @Test
-        @DisplayName("Então busca votos por sessão com sucesso")
-        public void buscarVotosPorSessaoTest() {
+        @DisplayName("Deve buscar votos por sessão com sucesso")
+        public void buscarVotosPorSessaoComSucesso() {
             List<Voto> votos = Arrays.asList(new Voto(), new Voto());
 
             when(votoRepository.findBySessaoId(anyLong())).thenReturn(votos);
@@ -86,6 +110,22 @@ public class VotacaoServiceTest {
 
             assertEquals(2, result.size());
             verify(votoRepository, times(1)).findBySessaoId(anyLong());
+        }
+    }
+
+    @Nested
+    @DisplayName("Testes de verificar quantidade de votos")
+    class VerificarQuantidadeVotosTests {
+
+        @Test
+        @DisplayName("Deve verificar quantidade de votos com sucesso")
+        public void verificarQuantidadeVotosComSucesso() {
+            when(votoRepository.count()).thenReturn(10L);
+
+            long quantidade = votacaoService.verificarQuantidadeVotos();
+
+            assertEquals(10L, quantidade);
+            verify(votoRepository, times(1)).count();
         }
     }
 }

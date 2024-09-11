@@ -67,12 +67,13 @@ public class VotacaoService {
         }
     }
 
-    protected void verificarQuantidadeVotos() {
+    protected long verificarQuantidadeVotos() {
         long votos = votoRepository.count();
         if (votos == 1) {
             LOGGER.error("Sessão não pode ser encerrada com 1 voto");
             throw new IllegalArgumentException("Sessão não pode ser encerrada com 1 voto.");
         }
+        return votos;
     }
 
     protected void verificarEleitorComVotos(Long eleitorId) {
